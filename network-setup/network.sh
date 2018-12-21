@@ -395,7 +395,7 @@ function tearDown() {
     copyDockerBaseFile
     docker-compose -f ./docker-config/docker-compose.yml down 
     docker rm $(docker ps -aq)
-    docker rmi $(docker images scm-* -q)
+    docker rmi $(docker images dev-* -q)
 
     # remove the local state
     rm -f ~/.hfc-key-store/*
