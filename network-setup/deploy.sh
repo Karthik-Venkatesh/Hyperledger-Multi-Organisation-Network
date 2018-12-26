@@ -37,4 +37,11 @@ sleep 30
 ./network.sh --mode signConfigUpdate --cli cli.org1.example.com --inputFile Org2Config.pb
 ./network.sh --mode channelUpdateNewOrg --cli cli.org1.example.com  --inputFile Org2Config.pb --orderer orderer0.example.com:7050 --channelName channelone
 
+# Chaincode installation
+./cc-dev.sh --mode installChaincode --cli cli.org1.example.com --peer peer0.org1.example.com:7051 --ccName cc1 --version 1.0 --language golang --ccPath chaincode_example02/go
+./cc-dev.sh --mode installChaincode --cli cli.org1.example.com --peer peer1.org1.example.com:7051 --ccName cc1 --version 1.0 --language golang --ccPath chaincode_example02/go
+./cc-dev.sh --mode installChaincode --cli cli.org2.example.com --peer peer0.org2.example.com:7051 --ccName cc1 --version 1.0 --language golang --ccPath chaincode_example02/go
+./cc-dev.sh --mode installChaincode --cli cli.org2.example.com --peer peer1.org2.example.com:7051 --ccName cc1 --version 1.0 --language golang --ccPath chaincode_example02/go
+./cc-dev.sh --mode instantiateChaincode --cli cli.org1.example.com --peer peer0.org1.example.com:7051 --orderer orderer0.example.com:7050 --ccName cc1 --version 1.0 --language golang --channelName channelone
+
 set +x

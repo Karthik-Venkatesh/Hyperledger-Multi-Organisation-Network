@@ -45,7 +45,7 @@ function endDesc() {
 
 function printHelp() {
     echo "Usage: "
-    echo "  network.sh <mode>  [<option> <option value>]"
+    echo "  network.sh [<option> <option value>]"
     echo "    <mode> - one of 'generateCrypto', 'generateArtifacts', 'createDockerComposeCA', 'up', 'stop'"
     echo "      'tearDown', 'copyOrdererCerts', 'createConfigUpdate', 'createChannel', 'joinChannel', 'updateAnchorPeer'"
     echo "      'signConfigUpdate', 'channelUpdateNewOrg'"
@@ -85,8 +85,10 @@ function printHelp() {
     echo "                             The file need to vailable in ./network-setup/org-artifacts folder"
     echo "          > Required: --channelName, --orderer, --inputFile, --cli"
     echo ""
-    echo "    <options> - one of --sourcePath, --channelName, --mspId, --domain, --orderer, --network, --org, --peer, --help"
+    echo "    <options> - one of --sourcePath, --channelName, --mspId, --newOrgMspId, --domain, --orderer, --network, --org, --peer"
+    echo "                  --cli, --inputFile, --outputFile, --help"
     echo "      --sourcePath - path of organisation source"
+    echo "      --mode - execution functionality"
     echo "      --channelName - channel name to use"
     echo "      --mspId - msp id of cli organisation. ex: Org1MSP"
     echo "      --newOrgMspId - msp id of new org which is going to enter ins network. ex: Org1MSP"
@@ -119,70 +121,70 @@ function askProceed() {
   esac
 }
 
-function exitIfChannelNameNotInvalid() {
+function exitIfChannelNameInvalid() {
   if [ -z $CHANNEL_NAME ]; then
     echo "Error: channel name (--channelName) not provided. Exiting..."
     exit 1
   fi
 }
 
-function exitIfMspIdNotInvalid() {
+function exitIfMspIdInvalid() {
   if [ -z $MSP_ID ]; then
     echo "Error: mspID (--mspId) not provided. Exiting..."
     exit 1
   fi
 }
 
-function exitIfNewOrgMspIdNotInvalid() {
+function exitIfNewOrgMspIdInvalid() {
   if [ -z $NEW_ORG_MSP_ID ]; then
     echo "Error: newOrgMspId (--newOrgMspId) not provided. Exiting..."
     exit 1
   fi
 }
 
-function exitIfDomainNotInvalid() {
+function exitIfDomainInvalid() {
   if [ -z $DOMAIN ]; then
     echo "Error: domain (--domain) not provided. Exiting..."
     exit 1
   fi
 }
 
-function exitIfOrdererNotInvalid() {
+function exitIfOrdererInvalid() {
   if [ -z $ORDERER ]; then
     echo "Error: orderer (--orderer) not provided. Exiting..."
     exit 1
   fi
 }
 
-function exitIfOrgNotInvalid() {
+function exitIfOrgInvalid() {
   if [ -z $ORG ]; then
     echo "Error: Oragnisations (--org) not provided. Exiting..."
     exit 1
   fi
 }
 
-function exitIfPeerNotInvalid() {
+function exitIfPeerInvalid() {
   if [ -z $PEER ]; then
     echo "Error: Peer (--peer) not provided. Exiting..."
     exit 1
   fi
 }
 
-function exitIfCliNotInvalid() {
+function exitIfCliInvalid() {
   if [ -z $CLI ]; then
     echo "Error: CLI (--cli) not provided. Exiting..."
     exit 1
   fi
 }
 
-function exitIfInputFileNotInvalid() {
+function exitIfInputFileInvalid() {
   if [ -z $INPUT_FILE ]; then
     echo "Error: Input (--inputFile) not provided. Exiting..."
     exit 1
   fi
 }
 
-function exitIfOutPutFileNotInvalid() {
+function exitIfOutPutFileInvalid() {
   if [ -z $OUTPUT_FILE ]; then
     echo "Error: Output file name (--outputFile) not provided. Exiting..."
     exit 1
@@ -257,7 +259,7 @@ function generateArtifactsWithGenesis() {
 
 function generateChannelConf() {
 
-  exitIfChannelNameNotInvalid
+  exitIfChannelNameInvalid
 
   exportGoPath
 
@@ -271,8 +273,8 @@ function generateChannelConf() {
 
 function generateChannelAnchor() {
   
-  exitIfChannelNameNotInvalid
-  exitIfMspIdNotInvalid
+  exitIfChannelNameInvalid
+  exitIfMspIdInvalid
 
   exportGoPath
 
@@ -286,8 +288,8 @@ function generateChannelAnchor() {
 
 function generateArtifactsJson() {
 
-  exitIfMspIdNotInvalid
-  exitIfOutPutFileNotInvalid
+  exitIfMspIdInvalid
+  exitIfOutPutFileInvalid
   
     set -e
 
@@ -319,7 +321,7 @@ function generateArtifactsJson() {
 
 function copyOrdererCerts() {
 
-    exitIfDomainNotInvalid
+    exitIfDomainInvalid
 
     # remove previous orderer certificates
     rm -fr ../orderer-certs
@@ -333,8 +335,8 @@ function copyOrdererCerts() {
 }
 
 function createDockerComposeCA() {
-  exitIfDomainNotInvalid
-  exitIfOrgNotInvalid
+  exitIfDomainInvalid
+  exitIfOrgInvalid
 
   cp $PATH_DOCKER_CA_TEMPLATE ./docker-config/docker-compose-ca.yaml
 
@@ -415,10 +417,10 @@ function copyDockerBaseFile() {
 
 function createChannel() {
   
-    exitIfChannelNameNotInvalid
-    exitIfCliNotInvalid
-    exitIfOrdererNotInvalid
-    exitIfPeerNotInvalid
+    exitIfChannelNameInvalid
+    exitIfCliInvalid
+    exitIfOrdererInvalid
+    exitIfPeerInvalid
 
     if [ ! -f "./channel-artifacts/$CHANNEL_NAME.tx" ]; then
       generateChannelConf
@@ -437,9 +439,9 @@ function createChannel() {
 
 
 function joinChannel() {
-  exitIfChannelNameNotInvalid
-  exitIfCliNotInvalid
-  exitIfPeerNotInvalid
+  exitIfChannelNameInvalid
+  exitIfCliInvalid
+  exitIfPeerInvalid
 
   docker exec $CLI scripts/script.sh --mode joinChannel \
     --channelName $CHANNEL_NAME \
@@ -452,10 +454,10 @@ function joinChannel() {
 
 
 function updateAnchorPeer() {
-  exitIfChannelNameNotInvalid
-  exitIfMspIdNotInvalid
-  exitIfCliNotInvalid
-  exitIfPeerNotInvalid
+  exitIfChannelNameInvalid
+  exitIfMspIdInvalid
+  exitIfCliInvalid
+  exitIfPeerInvalid
 
   if [ ! -f "./channel-artifacts/"$MSP_ID"anchors.$CHANNEL_NAME.tx" ]; then
     generateChannelAnchor
@@ -470,11 +472,11 @@ function updateAnchorPeer() {
 
 function createConfigUpdate() {
 
-  exitIfChannelNameNotInvalid
-  exitIfNewOrgMspIdNotInvalid
-  exitIfInputFileNotInvalid
-  exitIfOutPutFileNotInvalid
-  exitIfCliNotInvalid
+  exitIfChannelNameInvalid
+  exitIfNewOrgMspIdInvalid
+  exitIfInputFileInvalid
+  exitIfOutPutFileInvalid
+  exitIfCliInvalid
 
   docker exec $CLI scripts/script.sh --mode createConfigUpdate \
     --channelName $CHANNEL_NAME \
@@ -491,8 +493,8 @@ function createConfigUpdate() {
 }
 
 function signConfigUpdate() {
-  exitIfInputFileNotInvalid
-  exitIfCliNotInvalid
+  exitIfInputFileInvalid
+  exitIfCliInvalid
   
   docker exec $CLI scripts/script.sh --mode signConfigUpdate \
     --inputFile $INPUT_FILE
@@ -503,9 +505,9 @@ function signConfigUpdate() {
 }
 
 function channelUpdateNewOrg() {
-  exitIfChannelNameNotInvalid
-  exitIfInputFileNotInvalid
-  exitIfCliNotInvalid
+  exitIfChannelNameInvalid
+  exitIfInputFileInvalid
+  exitIfCliInvalid
 
   docker exec $CLI scripts/script.sh --mode channelUpdateNewOrg \
     --channelName $CHANNEL_NAME \
