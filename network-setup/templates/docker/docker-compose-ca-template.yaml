@@ -11,7 +11,7 @@ networks:
 
 services:
   CA_CONTAINER:
-    image: hyperledger/fabric-ca:1.3.0
+    image: hyperledger/fabric-ca:${CA_VERSION}
     environment:
       - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
       - FABRIC_CA_SERVER_CA_NAME=CA_CONTAINER

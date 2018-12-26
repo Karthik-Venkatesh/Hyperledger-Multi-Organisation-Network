@@ -2,7 +2,7 @@
 
 function printHelp() {
     echo "Usage: "
-    echo "  script.sh <mode> [<option> <option value>]"
+    echo "  script.sh [<option> <option value>]"
     echo "    <mode> - 'createChannel', 'joinChannel', 'updateAnchorPeer', 'createConfigUpdate', 'signConfigUpdate', 'channelUpdateNewOrg'"
     echo ""
     echo "      - 'createChannel' - create new channel"
@@ -24,7 +24,8 @@ function printHelp() {
     echo "                             The file need to vailable in ./network-setup/org-artifacts folder"
     echo "          > Required: --channelName, --orderer, --inputFile"
     echo ""
-    echo "    <options> - one of --channelName, --newOrgMspId, --orderer, --peer, --help"
+    echo "    <options> - one of --mode, --channelName, --newOrgMspId, --orderer, --peer, --inputFile, --outputFile, --help"
+    echo "      --mode - execution functionality"
     echo "      --channelName - channel name to use"
     echo "      --newOrgMspId - msp id of new org which is going to enter ins network. ex: Org1MSP"
     echo "      --orderer - orderer id to proceed channel configuration. ex: orderer0.example.com:7050"
@@ -36,42 +37,42 @@ function printHelp() {
 
 DELAY=3
 
-function exitIfChannelNameNotInvalid() {
+function exitIfChannelNameInvalid() {
   if [ -z $CHANNEL_NAME ]; then
     echo "Error: channel name (--channelName) not provided. Exiting..."
     exit 1
   fi
 }
 
-function exitIfNewOrgMspIdNotInvalid() {
+function exitIfNewOrgMspIdInvalid() {
   if [ -z $NEW_ORG_MSP_ID ]; then
     echo "Error: newOrgMspId (--newOrgMspId) not provided. Exiting..."
     exit 1
   fi
 }
 
-function exitIfOrdererNotInvalid() {
+function exitIfOrdererInvalid() {
   if [ -z $ORDERER ]; then
     echo "Error: orderer (--orderer) not provided. Exiting..."
     exit 1
   fi
 }
 
-function exitIfPeerNotInvalid() {
+function exitIfPeerInvalid() {
   if [ -z $PEER ]; then
     echo "Error: Peer (--peer) not provided. Exiting..."
     exit 1
   fi
 }
 
-function exitIfInputFileNotInvalid() {
+function exitIfInputFileInvalid() {
   if [ -z $INPUT_FILE ]; then
     echo "Error: Input (--inputFile) not provided. Exiting..."
     exit 1
   fi
 }
 
-function exitIfOutPutFileNotInvalid() {
+function exitIfOutPutFileInvalid() {
   if [ -z $OUTPUT_FILE ]; then
     echo "Error: Output file name (--outputFile) not provided. Exiting..."
     exit 1
@@ -83,9 +84,9 @@ function exitIfOutPutFileNotInvalid() {
 
 createChannel() {
 
-  exitIfChannelNameNotInvalid
-  exitIfOrdererNotInvalid
-  exitIfPeerNotInvalid
+  exitIfChannelNameInvalid
+  exitIfOrdererInvalid
+  exitIfPeerInvalid
 
 	setGlobals $PEER
 
@@ -107,8 +108,8 @@ createChannel() {
 }
 
 joinChannel () {
-  exitIfChannelNameNotInvalid
-  exitIfPeerNotInvalid
+  exitIfChannelNameInvalid
+  exitIfPeerInvalid
 	
   joinChannelWithRetry
 	echo "===================== $PEER joined channel '$CHANNEL_NAME' ===================== "
@@ -116,20 +117,20 @@ joinChannel () {
 }
 
 function updateAnchorPeer() {
-  exitIfChannelNameNotInvalid
-  exitIfOrdererNotInvalid
-  exitIfPeerNotInvalid
+  exitIfChannelNameInvalid
+  exitIfOrdererInvalid
+  exitIfPeerInvalid
   
   updateAnchorPeers
 }
 
 function createConfigUpdate() {
     
-    exitIfNewOrgMspIdNotInvalid
-    exitIfChannelNameNotInvalid
-    exitIfOrdererNotInvalid
-    exitIfInputFileNotInvalid
-    exitIfOutPutFileNotInvalid
+    exitIfNewOrgMspIdInvalid
+    exitIfChannelNameInvalid
+    exitIfOrdererInvalid
+    exitIfInputFileInvalid
+    exitIfOutPutFileInvalid
 
     # default orderer ordere0 and port is 7051
 
@@ -148,9 +149,9 @@ function createConfigUpdate() {
 }
 
 function channelUpdateNewOrg() {
-    exitIfChannelNameNotInvalid
-    exitIfInputFileNotInvalid
-    exitIfOrdererNotInvalid
+    exitIfChannelNameInvalid
+    exitIfInputFileInvalid
+    exitIfOrdererInvalid
 
     set -x
     peer channel update -f ./org-artifacts/$INPUT_FILE -c $CHANNEL_NAME -o $ORDERER --tls --cafile $ORDERER_CA
@@ -158,7 +159,7 @@ function channelUpdateNewOrg() {
 } 
 
 function signConfigUpdate() {
-  exitIfInputFileNotInvalid
+  exitIfInputFileInvalid
   signConfigtxAsPeerOrg ./org-artifacts/$INPUT_FILE
 }
 
