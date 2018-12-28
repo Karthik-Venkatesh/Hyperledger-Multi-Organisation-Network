@@ -79,19 +79,27 @@ function exitIfCliInvalid() {
   fi
 }
 
-function exitIfOutPutInvalid() {
-  if [ -z $OUTPUT ]; then
-    echo "Error: Output (--output) not provided. Exiting..."
+function exitIfArgsInvalid() {
+  if [ -z $ARGS ]; then
+    echo "Error: Arguments (--args) not provided. Exiting..."
     exit 1
   fi
 }
+
+function exitIfPolicyInvalid() {
+  if [ -z $POLICY ]; then
+    echo "Error: Policy (--policy) not provided. Exiting..."
+    exit 1
+  fi
+}
+
 
 function installChaincode() {
   exitIfPeerInvalid
   exitIfCCNameInvalid
   exitIfCCPathInvalid
   exitIfVersionInvalid
-  exitIfLanguageInvalid  
+  exitIfLanguageInvalid
   docker exec $CLI scripts/cc.sh --mode installChaincode \
     --peer $PEER \
     --ccName $CHAIN_CODE_NAME \
@@ -109,7 +117,7 @@ function instantiateChaincode() {
   exitIfPeerInvalid
   exitIfCCNameInvalid
   exitIfVersionInvalid
-  exitIfLanguageInvalid  
+  exitIfLanguageInvalid
   exitIfChannelNameInvalid
   docker exec $CLI scripts/cc.sh --mode instantiateChaincode \
     --orderer $ORDERER \
@@ -117,31 +125,20 @@ function instantiateChaincode() {
     --ccName $CHAIN_CODE_NAME \
     --version $VERSION \
     --language $LANGUAGE \
-    --channelName $CHANNEL_NAME 
+    --channelName $CHANNEL_NAME \
+    --args $ARGS \
+    --policy $POLICY
   if [ $? -ne 0 ]; then
       echo "ERROR !!!! Instantiate chaincode failed"
       exit 1
   fi
 }
 
-# function chaincodeQuery() {
-#   docker exec $CLI scripts/cc.sh --mode chaincodeQuery \
-#     --channelName $CHANNEL_NAME \
-#     --peer $PEER \
-#     --orderer $ORDERER
-#   if [ $? -ne 0 ]; then
-#       echo "ERROR !!!! Channel creation failed"
-#       exit 1
-#   fi
-# }
-
 function execute() {
   if [ "$MODE" == "installChaincode" ]; then
     installChaincode
   elif [ "$MODE" == "instantiateChaincode" ]; then
     instantiateChaincode
-  # elif [ "$MODE" == "chaincodeQuery" ]; then
-  #   chaincodeQuery
   else
     printHelp
     exit 1
@@ -151,41 +148,44 @@ function execute() {
 function parseParam() {
   while [ "$1" != "" ]; do
     case $1 in
-      --cli )           
+      --cli )
         CLI=$2
         ;;
-      --mode )           
+      --mode )
         MODE=$2
         ;;
-      --channelName )    
+      --channelName )
         CHANNEL_NAME=$2
         ;;
-      --language )    
+      --language )
         LANGUAGE=$2
         ;;
-      --ccPath )    
+      --ccPath )
         CC_SRC_PATH=$2
         ;;
-      --ccName )    
+      --ccName )
         CHAIN_CODE_NAME=$2
         ;;
-      --version )           
+      --version )
         VERSION=$2
         ;;
-      --orderer )           
+      --orderer )
         ORDERER=$2
         ;;
-      --peer )           
+      --peer )
         PEER=$2
         ;;
-      --output )           
-        OUTPUT=$2
+      --policy )
+        POLICY=$2
         ;;
-      --help )           
+      --args )
+        ARGS=$2
+        ;;
+      --help )
         printHelp
         exit 1
         ;;
-      * )           
+      * )
         printHelp
         exit 1
         ;;
