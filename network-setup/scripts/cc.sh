@@ -81,6 +81,20 @@ function exitIfOutPutInvalid() {
   fi
 }
 
+function exitIfArgsInvalid() {
+  if [ -z $ARGS ]; then
+    echo "Error: Arguments (--args) not provided. Exiting..."
+    exit 1
+  fi
+}
+
+function exitIfPolicyInvalid() {
+  if [ -z $POLICY ]; then
+    echo "Error: Policy (--policy) not provided. Exiting..."
+    exit 1
+  fi
+}
+
 function verifyResult() {
   if [ $1 -ne 0 ]; then
     echo "!!!!!!!!!!!!!!! "$2" !!!!!!!!!!!!!!!!"
@@ -100,7 +114,7 @@ function installChaincode() {
   exitIfCCNameInvalid
   exitIfCCPathInvalid
   exitIfVersionInvalid
-  exitIfLanguageInvalid 
+  exitIfLanguageInvalid
 
   set -x
   peer chaincode install -n ${CHAIN_CODE_NAME} -v ${VERSION} -l ${LANGUAGE} -p ${CC_SRC_PATH} >&log.txt
@@ -116,20 +130,22 @@ function instantiateChaincode() {
   exitIfPeerInvalid
   exitIfCCNameInvalid
   exitIfVersionInvalid
-  exitIfLanguageInvalid  
+  exitIfLanguageInvalid
   exitIfChannelNameInvalid
+  exitIfArgsInvalid
+  exitIfPolicyInvalid
 
   # while 'peer chaincode' command can get the orderer endpoint from the peer
   # (if join was successful), let's supply it directly as we know it using
   # the "-o" option
   if [ -z "$CORE_PEER_TLS_ENABLED" -o "$CORE_PEER_TLS_ENABLED" = "false" ]; then
     set -x
-    peer chaincode instantiate -o $ORDERER -C $CHANNEL_NAME -n ${CHAIN_CODE_NAME} -l ${LANGUAGE} -v ${VERSION} -c '{"Args":["init","a","100","b","200"]}' -P "AND ('Org1MSP.peer','Org2MSP.peer')" >&log.txt
+    peer chaincode instantiate -o $ORDERER -C $CHANNEL_NAME -n ${CHAIN_CODE_NAME} -l ${LANGUAGE} -v ${VERSION} -c $ARGS -P  $POLICY >&log.txt
     res=$?
     set +x
   else
     set -x
-    peer chaincode instantiate -o $ORDERER --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA -C $CHANNEL_NAME -n ${CHAIN_CODE_NAME} -l ${LANGUAGE} -v ${VERSION} -c '{"Args":["init","a","100","b","200"]}' -P "AND ('Org1MSP.peer','Org2MSP.peer')" >&log.txt
+    peer chaincode instantiate -o $ORDERER --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA -C $CHANNEL_NAME -n ${CHAIN_CODE_NAME} -l ${LANGUAGE} -v ${VERSION} -c $ARGS -P $POLICY >&log.txt
     res=$?
     set +x
   fi
@@ -139,42 +155,6 @@ function instantiateChaincode() {
   echo
 }
 
-# function chaincodeQuery() {
-#   EXPECTED_RESULT=$OUTPUT
-#   echo "===================== Querying on ${PEER} on channel '$CHANNEL_NAME'... ===================== "
-#   local rc=1
-#   local starttime=$(date +%s)
-
-#   # continue to poll
-#   # we either get a successful response, or reach TIMEOUT
-#   while
-#     test "$(($(date +%s) - starttime))" -lt "$TIMEOUT" -a $rc -ne 0
-#   do
-#     sleep $DELAY
-#     echo "Attempting to Query ${PEER} ...$(($(date +%s) - starttime)) secs"
-#     set -x
-#     peer chaincode query -C $CHANNEL_NAME -n mycc -c '{"Args":["query","a"]}' >&log.txt
-#     res=$?
-#     set +x
-#     test $res -eq 0 && VALUE=$(cat log.txt | awk '/Query Result/ {print $NF}')
-#     test "$VALUE" = "$EXPECTED_RESULT" && let rc=0
-#     # removed the string "Query Result" from peer chaincode query command
-#     # result. as a result, have to support both options until the change
-#     # is merged.
-#     test $rc -ne 0 && VALUE=$(cat log.txt | egrep '^[0-9]+$')
-#     test "$VALUE" = "$EXPECTED_RESULT" && let rc=0
-#   done
-#   echo
-#   cat log.txt
-#   if test $rc -eq 0; then
-#     echo "===================== Query successful on peer${PEER}.org${ORG} on channel '$CHANNEL_NAME' ===================== "
-#   else
-#     echo "!!!!!!!!!!!!!!! Query result on peer${PEER}.org${ORG} is INVALID !!!!!!!!!!!!!!!!"
-#     echo "================== ERROR !!! FAILED to execute End-2-End Scenario =================="
-#     echo
-#     exit 1
-#   fi
-# }
 
 function execute() {
   echo $MODE
@@ -182,8 +162,6 @@ function execute() {
     installChaincode
   elif [ "$MODE" == "instantiateChaincode" ]; then
     instantiateChaincode
-  # elif [ "$MODE" == "chaincodeQuery" ]; then
-  #   chaincodeQuery
   else
     printHelp
     exit 1
@@ -193,39 +171,45 @@ function execute() {
 function parseParam() {
   while [ "$1" != "" ]; do
     case $1 in
-      --mode )           
+      --mode )
         MODE=$2
         ;;
-      --channelName )    
+      --channelName )
         export CHANNEL_NAME=$2
         ;;
-      --language )    
+      --language )
         export LANGUAGE=$2
         ;;
-      --ccPath )    
+      --ccPath )
         export CC_SRC_PATH="github.com/chaincode/$2"
         ;;
-      --ccName )    
+      --ccName )
         export CHAIN_CODE_NAME=$2
         ;;
-      --version )           
+      --version )
         export VERSION=$2
         ;;
-      --orderer )           
+      --orderer )
         export ORDERER=$2
         ;;
-      --peer )           
+      --peer )
         export PEER=$2
         setGlobals $PEER
         ;;
-      --output )           
+      --output )
         OUTPUT=$2
         ;;
-      --help )           
+      --policy )
+        POLICY=$2
+        ;;
+      --args )
+        ARGS=$2
+        ;;
+      --help )
         printHelp
         exit 1
         ;;
-      * )           
+      * )
         printHelp
         exit 1
         ;;
