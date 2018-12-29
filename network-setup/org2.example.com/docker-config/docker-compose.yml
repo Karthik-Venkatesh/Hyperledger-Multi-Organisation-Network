@@ -2,7 +2,7 @@
 version: '2'
 
 networks:
-    poc:
+    net:
 
 services:
 
@@ -16,7 +16,7 @@ services:
         ports:
           - "7984:5984"
         networks:
-          poc:
+          net:
              aliases:
                - ${CORE_PEER_NETWORKID}
 
@@ -30,7 +30,7 @@ services:
         ports:
           - "8984:5984"
         networks:
-          poc:
+          net:
              aliases:
                - ${CORE_PEER_NETWORKID}
 
@@ -61,7 +61,7 @@ services:
         depends_on:
             - couch.peer0.org2.example.com
         networks:
-          poc:
+          net:
              aliases:
                - ${CORE_PEER_NETWORKID}
         ports:
@@ -96,7 +96,7 @@ services:
             - peer0.org2.example.com
             - couch.peer1.org2.example.com
         networks:
-          poc:
+          net:
              aliases:
                - ${CORE_PEER_NETWORKID}
         ports:
@@ -134,6 +134,6 @@ services:
         - peer0.org2.example.com
         - peer1.org2.example.com
         networks:
-            poc:
+            net:
                 aliases:
                 - ${CORE_PEER_NETWORKID}

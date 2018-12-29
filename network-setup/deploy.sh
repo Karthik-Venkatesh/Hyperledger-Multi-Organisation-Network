@@ -39,13 +39,18 @@ sleep 30
 
 # Chaincode installation
 
-CC=marbles02/go
+CHAIN_CODE_PATH=marbles02/go # Path from "<ProjectRoot>/chaincode/" folder
 
-./cc-dev.sh --mode installChaincode --cli cli.org1.example.com --peer peer0.org1.example.com:7051 --ccName marbles --version 1.0 --language golang --ccPath $CC
-./cc-dev.sh --mode installChaincode --cli cli.org1.example.com --peer peer1.org1.example.com:7051 --ccName marbles --version 1.0 --language golang --ccPath $CC
-./cc-dev.sh --mode installChaincode --cli cli.org2.example.com --peer peer0.org2.example.com:7051 --ccName marbles --version 1.0 --language golang --ccPath $CC
-./cc-dev.sh --mode installChaincode --cli cli.org2.example.com --peer peer1.org2.example.com:7051 --ccName marbles --version 1.0 --language golang --ccPath $CC
+./cc-dev.sh --mode installChaincode --cli cli.org1.example.com --peer peer0.org1.example.com:7051 --ccName marbles --version 1.0 --language golang --ccPath $CHAIN_CODE_PATH
+./cc-dev.sh --mode installChaincode --cli cli.org1.example.com --peer peer1.org1.example.com:7051 --ccName marbles --version 1.0 --language golang --ccPath $CHAIN_CODE_PATH
+./cc-dev.sh --mode installChaincode --cli cli.org2.example.com --peer peer0.org2.example.com:7051 --ccName marbles --version 1.0 --language golang --ccPath $CHAIN_CODE_PATH
+./cc-dev.sh --mode installChaincode --cli cli.org2.example.com --peer peer1.org2.example.com:7051 --ccName marbles --version 1.0 --language golang --ccPath $CHAIN_CODE_PATH
 ./cc-dev.sh --mode instantiateChaincode --cli cli.org1.example.com --peer peer0.org1.example.com:7051 --orderer orderer0.example.com:7050 --ccName marbles --version 1.0 --language golang --channelName channelone --args '{"Args":["init"]}' --policy "AND('Org1MSP.peer','Org2MSP.peer')"
+
+set +x
+###############################################################
+#    Below functionalities are in the implemetation state.    #
+###############################################################
 
 # # ==== Invoke marbles ====
 # ./cc-dev.sh --mode invokeChaincode --cli cli.org1.example.com --peer peer0.org1.example.com:7051 --channelName channelone --ccName marbles --args '{"Args":["initMarble","marble1","blue","35","tom"]}'
@@ -65,25 +70,3 @@ CC=marbles02/go
 
 # # Rich Query with Pagination (Only supported if CouchDB is used as state database):
 # ./cc-dev.sh --mode queryChaincode --cli cli.org1.example.com --peer peer0.org1.example.com:7051 --channelName channelone --ccName marbles --args '{"Args":["queryMarblesWithPagination","{\"selector\":{\"owner\":\"tom\"}}","3",""]}'
-
-set +x
-
-# ==== Invoke marbles ====
-# peer chaincode invoke -C channelone -n marbles -c '{"Args":["initMarble","marble1","blue","35","tom"]}'
-# peer chaincode invoke -C channelone -n marbles -c '{"Args":["initMarble","marble2","red","50","tom"]}'
-# peer chaincode invoke -C channelone -n marbles -c '{"Args":["initMarble","marble3","blue","70","tom"]}'
-# peer chaincode invoke -C channelone -n marbles -c '{"Args":["transferMarble","marble2","jerry"]}'
-# peer chaincode invoke -C channelone -n marbles -c '{"Args":["transferMarblesBasedOnColor","blue","jerry"]}'
-# peer chaincode invoke -C channelone -n marbles -c '{"Args":["delete","marble1"]}'
-
-# ==== Query marbles ====
-# peer chaincode query -C channelone -n marbles -c '{"Args":["readMarble","marble1"]}'
-# peer chaincode query -C channelone -n marbles -c '{"Args":["getMarblesByRange","marble1","marble3"]}'
-# peer chaincode query -C channelone -n marbles -c '{"Args":["getHistoryForMarble","marble1"]}'
-
-# Rich Query (Only supported if CouchDB is used as state database):
-# peer chaincode query -C channelone -n marbles -c '{"Args":["queryMarblesByOwner","tom"]}'
-# peer chaincode query -C channelone -n marbles -c '{"Args":["queryMarbles","{\"selector\":{\"owner\":\"tom\"}}"]}'
-
-# Rich Query with Pagination (Only supported if CouchDB is used as state database):
-# peer chaincode query -C channelone -n marbles -c '{"Args":["queryMarblesWithPagination","{\"selector\":{\"owner\":\"tom\"}}","3",""]}'

@@ -91,12 +91,12 @@ function config(){
 
 	# database container configuration
 	fabric_explorer_db_tag="hyperledger/explorer-db"
-	fabric_explorer_db_name="poc-02-blockchain-explorer-db"
+	fabric_explorer_db_name="blockchain-explorer-db"
 	db_ip=192.168.10.11
 
 	# fabric explorer configuratio
 	fabric_explorer_tag="hyperledger/explorer"
-	fabric_explorer_name="poc-02-blockchain-explorer"
+	fabric_explorer_name="blockchain-explorer"
 	explorer_ip=192.168.10.12
 	# END: GLOBAL VARIABLES OF THE SCRIPT
 }
@@ -255,4 +255,4 @@ CONFIG_JSON=config.json
 #Pass arguments to function exactly as-is
 main "$@"
 
-# ./deploy_explorer.sh dev scm_poc
+# ./deploy_explorer.sh dev scm_net

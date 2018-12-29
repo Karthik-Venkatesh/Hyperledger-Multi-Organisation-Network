@@ -1,7 +1,7 @@
-docker stop $(docker ps -aq -f "network=dev_poc")
-docker rm $(docker ps -aq -f "network=dev_poc")
+docker stop $(docker ps -aq -f "network=dev_net")
+docker rm $(docker ps -aq -f "network=dev_net")
 docker rmi $(docker images dev-* -q)
-docker network rm dev_poc
+docker network rm dev_net
 docker volume prune -f
 
 rm -fr ./tmp
