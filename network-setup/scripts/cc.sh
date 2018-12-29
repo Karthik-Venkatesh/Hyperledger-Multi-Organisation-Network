@@ -6,22 +6,30 @@ DELAY="3"
 function printHelp() {
     echo "Usage: "
     echo "  cc.sh [<option> <option value>]"
-    echo "    <mode> - 'installChaincode', 'instantiateChaincode'"
+    echo "    <mode> - 'installChaincode', 'instantiateChaincode', 'invokeChaincode', 'queryChaincode', 'upgradeChaincode'"
     echo ""
-    echo "      - 'installChaincode' - Installing the chaincode"
+    echo "      - 'installChaincode' - Package the specified chaincode into a deployment spec and save it on the peer's path."
     echo "          > Required: --peer, --ccName, --ccPath, --version, --language"
-    echo "      - 'instantiateChaincode' - Instantiating the chaincode"
-    echo "          > Required: --peer, --orderer, --ccName, --version, --language, --channelName"
+    echo "      - 'instantiateChaincode' - Deploy the specified chaincode to the network."
+    echo "          > Required: --peer, --orderer, --ccName, --version, --language, --channelName, --args, --policy"
+    echo "      - 'invokeChaincode' -  Invoke the specified chaincode."
+    echo "          > Required: --peer, --ccName, --channelName, --args"
+    echo "      - 'queryChaincode' - Query using the specified chaincode"
+    echo "          > Required: --peer, --ccName, --channelName, --args"
+    echo "      - 'upgradeChaincode' - Upgrade chaincode."
+    echo "          > Required: --peer, --orderer, --ccName, --channelName, --version, --args, --policy"
     echo ""
-    echo "    <options> - one of --mode, --channelName, --orderer, --peer, --ccName, --ccPath, --version, --language, --help"
+    echo "    <options> - one of --mode, --channelName, --orderer, --peer, --ccName, --ccPath, --version, --language, --args, --policy, --help"
     echo "      --mode - execution functionality"
-    echo "      --channelName - channel name to use"
     echo "      --orderer - orderer id to proceed channel configuration. ex: orderer0.example.com:7050"
     echo "      --peer - peer id. ex: peer0.org1.example.com:7051"
-    echo "      --ccName - Chain code name"
-    echo "      --ccPath - Chaincode path from chaincode folder"
-    echo "      --version - Chaincode version"
-    echo "      --language - Chaincode language(eg: golang)"
+    echo "      --channelName - The channel on which this command should be executed"
+    echo "      --ccName - Name of the chaincode"
+    echo "      --ccPath - Path to chaincode(from chaincode folder)"
+    echo "      --version - Version of the chaincode specified in install/instantiate/upgrade commands"
+    echo "      --language - Language the chaincode is written in (default \"golang\")"
+    echo "      --args - Constructor message for the chaincode in JSON format (default \"{}\")"
+    echo "      --policy - The endorsement policy associated to this chaincode"
     echo "      --help - help"
 }
 
@@ -116,11 +124,15 @@ function installChaincode() {
   exitIfVersionInvalid
   exitIfLanguageInvalid
 
+  setGlobals $PEER
+
   set -x
   peer chaincode install -n ${CHAIN_CODE_NAME} -v ${VERSION} -l ${LANGUAGE} -p ${CC_SRC_PATH} >&log.txt
   res=$?
   set +x
   cat log.txt
+  verifyResult $res "Chaincode installation on ${PEER} on channel '$CHANNEL_NAME' failed"
+  echo "===================== Chaincode is installed ${PEER} on channel '$CHANNEL_NAME' ===================== "
   echo
 }
 
@@ -134,6 +146,8 @@ function instantiateChaincode() {
   exitIfChannelNameInvalid
   exitIfArgsInvalid
   exitIfPolicyInvalid
+
+  setGlobals $PEER
 
   # while 'peer chaincode' command can get the orderer endpoint from the peer
   # (if join was successful), let's supply it directly as we know it using
@@ -155,6 +169,89 @@ function instantiateChaincode() {
   echo
 }
 
+function invokeChaincode() {
+
+  echo "Functionality need to be implemented"
+
+  # exitIfPeerInvalid
+  # exitIfCCNameInvalid
+  # exitIfChannelNameInvalid
+  # exitIfArgsInvalid
+
+  # if [ -z "$CORE_PEER_TLS_ENABLED" -o "$CORE_PEER_TLS_ENABLED" = "false" ]; then
+  #   set -x
+  #   peer chaincode invoke -C $CHANNEL_NAME -n ${CHAIN_CODE_NAME} -c $ARGS
+  #   res=$?
+  #   set +x
+  # else
+  #   set -x
+  #   peer chaincode invoke --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA -C $CHANNEL_NAME -n ${CHAIN_CODE_NAME} -c $ARGS
+  #   res=$?
+  #   set +x
+  # fi
+  # cat log.txt
+  # verifyResult $res "Chaincode invoke on ${PEER} on channel '$CHANNEL_NAME' failed"
+  # echo "===================== Chaincode invoke ${PEER} on channel '$CHANNEL_NAME'n succedded ===================== "
+  # echo
+}
+
+function queryChaincode() {
+
+  echo "Functionality need to be implemented"
+
+  # exitIfPeerInvalid
+  # exitIfCCNameInvalid
+  # exitIfChannelNameInvalid
+  # exitIfArgsInvalid
+
+  # setGlobals $PEER
+
+  # if [ -z "$CORE_PEER_TLS_ENABLED" -o "$CORE_PEER_TLS_ENABLED" = "false" ]; then
+  #   set -x
+  #   peer chaincode query -C $CHANNEL_NAME -n ${CHAIN_CODE_NAME} -c $ARGS
+  #   res=$?
+  #   set +x
+  # else
+  #   set -x
+  #   peer chaincode query --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA -C $CHANNEL_NAME -n ${CHAIN_CODE_NAME} -c $ARGS
+  #   res=$?
+  #   set +x
+  # fi
+  # cat log.txt
+  # verifyResult $res "Chaincode query on ${PEER} on channel '$CHANNEL_NAME' failed"
+  # echo "===================== Chaincode query ${PEER} on channel '$CHANNEL_NAME'n succedded ===================== "
+  # echo
+  # return $res
+}
+
+function upgradeChaincode() {
+
+  exitIfOrdererInvalid
+  exitIfPeerInvalid
+  exitIfCCNameInvalid
+  exitIfChannelNameInvalid
+  exitIfArgsInvalid
+  exitIfVersionInvalid
+  exitIfPolicyInvalid
+
+  setGlobals $PEER
+
+  if [ -z "$CORE_PEER_TLS_ENABLED" -o "$CORE_PEER_TLS_ENABLED" = "false" ]; then
+    set -x
+    peer chaincode upgrade -o $ORDERER -C $CHANNEL_NAME -n ${CHAIN_CODE_NAME} -v $VERSION -c $ARGS -P $POLICY
+    res=$?
+    set +x
+  else
+    set -x
+    peer chaincode upgrade -o $ORDERER --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA -C $CHANNEL_NAME -n ${CHAIN_CODE_NAME} -v $VERSION -c $ARGS -P $POLICY
+    res=$?
+    set +x
+  fi
+  cat log.txt
+  verifyResult $res "Chaincode upgrade on  ${PEER} has failed"
+  echo "===================== Chaincode is upgraded on  ${PEER} on channel '$CHANNEL_NAME' ===================== "
+  echo
+}
 
 function execute() {
   echo $MODE
@@ -162,6 +259,13 @@ function execute() {
     installChaincode
   elif [ "$MODE" == "instantiateChaincode" ]; then
     instantiateChaincode
+  elif [ "$MODE" == "invokeChaincode" ]; then
+    invokeChaincode
+  elif [ "$MODE" == "queryChaincode" ]; then
+    queryChaincode
+  elif [ "$MODE" == "upgradeChaincode" ]; then
+    upgradeChaincode
+    return $?
   else
     printHelp
     exit 1
@@ -194,7 +298,6 @@ function parseParam() {
         ;;
       --peer )
         export PEER=$2
-        setGlobals $PEER
         ;;
       --output )
         OUTPUT=$2

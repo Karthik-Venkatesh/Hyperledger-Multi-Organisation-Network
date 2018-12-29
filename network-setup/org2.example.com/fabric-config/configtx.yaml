@@ -4,16 +4,16 @@ Organizations:
         Name: Org2MSP
         ID: Org2MSP
         MSPDir: ../crypto-config/peerOrganizations/org2.example.com/msp
-        Policies:
-            Readers:
-                Type: Signature
-                Rule: "OR('Org2MSP.admin', 'Org2MSP.peer', 'Org2MSP.client')"
-            Writers:
-                Type: Signature
-                Rule: "OR('Org2MSP.admin', 'Org2MSP.client')"
-            Admins:
-                Type: Signature
-                Rule: "OR('Org2MSP.admin')"
+        # Policies:
+        #     Readers:
+        #         Type: Signature
+        #         Rule: "OR('Org2MSP.admin', 'Org2MSP.peer', 'Org2MSP.client')"
+        #     Writers:
+        #         Type: Signature
+        #         Rule: "OR('Org2MSP.admin', 'Org2MSP.client')"
+        #     Admins:
+        #         Type: Signature
+        #         Rule: "OR('Org2MSP.admin')"
         AnchorPeers:
             - Host: peer0.org2.example.com
               Port: 7051

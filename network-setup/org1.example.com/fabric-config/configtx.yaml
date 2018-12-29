@@ -5,31 +5,31 @@ Organizations:
         Name: OrdererOrg
         ID: OrdererMSP
         MSPDir: ../crypto-config/ordererOrganizations/example.com/msp
-        Policies:
-            Readers:
-                Type: Signature
-                Rule: "OR('OrdererMSP.member')"
-            Writers:
-                Type: Signature
-                Rule: "OR('OrdererMSP.member')"
-            Admins:
-                Type: Signature
-                Rule: "OR('OrdererMSP.admin')"
+        # Policies:
+        #     Readers:
+        #         Type: Signature
+        #         Rule: "OR('OrdererMSP.member')"
+        #     Writers:
+        #         Type: Signature
+        #         Rule: "OR('OrdererMSP.member')"
+        #     Admins:
+        #         Type: Signature
+        #         Rule: "OR('OrdererMSP.admin')"
 
     - &Org1
         Name: Org1MSP
         ID: Org1MSP
         MSPDir: ../crypto-config/peerOrganizations/org1.example.com/msp
-        Policies:
-            Readers:
-                Type: Signature
-                Rule: "OR('Org1MSP.admin', 'Org1MSP.peer', 'Org1MSP.client')"
-            Writers:
-                Type: Signature
-                Rule: "OR('Org1MSP.admin', 'Org1MSP.client')"
-            Admins:
-                Type: Signature
-                Rule: "OR('Org1MSP.admin')"
+        # Policies:
+        #     Readers:
+        #         Type: Signature
+        #         Rule: "OR('Org1MSP.admin', 'Org1MSP.peer', 'Org1MSP.client')"
+        #     Writers:
+        #         Type: Signature
+        #         Rule: "OR('Org1MSP.admin', 'Org1MSP.client')"
+        #     Admins:
+        #         Type: Signature
+        #         Rule: "OR('Org1MSP.admin')"
         AnchorPeers:
             - Host: peer0.org1.example.com
               Port: 7051
@@ -108,13 +108,13 @@ Channel: &ChannelDefaults
 
 Profiles:
     TwoOrgsOrdererGenesis:
-        <<: *ChannelDefaults
+        # <<: *ChannelDefaults
         Orderer:
             <<: *OrdererDefaults
             Organizations:
                 - *OrdererOrg
-            Capabilities:
-                <<: *OrdererCapabilities
+            # Capabilities:
+            #     <<: *OrdererCapabilities
         Consortiums:
             SampleConsortium:
                 Organizations:
@@ -125,5 +125,5 @@ Profiles:
             <<: *ApplicationDefaults
             Organizations:
                 - *Org1
-            Capabilities:
-                <<: *ApplicationCapabilities
+            # Capabilities:
+            #     <<: *ApplicationCapabilities
