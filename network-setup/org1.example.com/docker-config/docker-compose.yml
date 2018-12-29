@@ -2,7 +2,7 @@
 version: '2'
 
 networks:
-    poc:
+    net:
 
 services:
 
@@ -15,7 +15,7 @@ services:
             - ZOO_MY_ID=1
             - ZOO_SERVERS=server.1=zookeeper0:2888:3888
         networks:
-          poc:
+          net:
              aliases:
                - ${CORE_PEER_NETWORKID}
 
@@ -28,7 +28,7 @@ services:
     #         - ZOO_MY_ID=2
     #         - ZOO_SERVERS=server.1=zookeeper0:2888:3888 server.2=zookeeper1:2888:3888 
     #     networks:
-    #       poc:
+    #       net:
     #          aliases:
     #            - ${CORE_PEER_NETWORKID}
 
@@ -41,7 +41,7 @@ services:
     #         - ZOO_MY_ID=3
     #         - ZOO_SERVERS=server.1=zookeeper0:2888:3888 server.2=zookeeper1:2888:3888 server.3=zookeeper2:2888:3888
     #     networks:
-    #       poc:
+    #       net:
     #          aliases:
     #            - ${CORE_PEER_NETWORKID}
 
@@ -61,7 +61,7 @@ services:
             # - zookeeper1
             # - zookeeper2
         networks:
-          poc:
+          net:
              aliases:
                - ${CORE_PEER_NETWORKID}
 
@@ -81,7 +81,7 @@ services:
             # - zookeeper1
             # - zookeeper2
         networks:
-          poc:
+          net:
              aliases:
                - ${CORE_PEER_NETWORKID}
 
@@ -101,7 +101,7 @@ services:
     #         - zookeeper1
     #         # - zookeeper2
     #     networks:
-    #       poc:
+    #       net:
     #          aliases:
     #            - ${CORE_PEER_NETWORKID}
 
@@ -121,7 +121,7 @@ services:
     #         - zookeeper1
     #         - zookeeper2
     #     networks:
-    #       poc:
+    #       net:
     #          aliases:
     #            - ${CORE_PEER_NETWORKID}
 
@@ -149,7 +149,7 @@ services:
             # - kafka2
             # - kafka3
         networks:
-          poc:
+          net:
              aliases:
                - ${CORE_PEER_NETWORKID}
         ports:
@@ -181,7 +181,7 @@ services:
             # - kafka2
             # - kafka3
         networks:
-          poc:
+          net:
              aliases:
                - ${CORE_PEER_NETWORKID}
         ports:
@@ -211,7 +211,7 @@ services:
     #         - kafka2
     #         - kafka3
     #     networks:
-    #       poc:
+    #       net:
     #          aliases:
     #            - ${CORE_PEER_NETWORKID}
     #     ports:
@@ -227,7 +227,7 @@ services:
         ports:
           - "5984:5984"
         networks:
-          poc:
+          net:
              aliases:
                - ${CORE_PEER_NETWORKID}
 
@@ -241,7 +241,7 @@ services:
         ports:
           - "6984:5984"
         networks:
-          poc:
+          net:
              aliases:
                - ${CORE_PEER_NETWORKID}
 
@@ -275,7 +275,7 @@ services:
             # - orderer2.example.com
             - couch.peer0.org1.example.com
         networks:
-          poc:
+          net:
              aliases:
                - ${CORE_PEER_NETWORKID}
         ports:
@@ -313,7 +313,7 @@ services:
             - peer0.org1.example.com
             - couch.peer1.org1.example.com
         networks:
-          poc:
+          net:
              aliases:
                - ${CORE_PEER_NETWORKID}
         ports:
@@ -354,6 +354,6 @@ services:
         - peer0.org1.example.com
         - peer1.org1.example.com
         networks:
-            poc:
+            net:
                 aliases:
                 - ${CORE_PEER_NETWORKID}

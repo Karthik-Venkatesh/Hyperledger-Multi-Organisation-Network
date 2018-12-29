@@ -6,7 +6,7 @@
 version: '2'
 
 networks:
-  poc:
+  net:
 
 
 services:
@@ -28,6 +28,6 @@ services:
       - ../crypto-config/peerOrganizations/CA_ORG_DOMAIN/ca/:/etc/hyperledger/fabric-ca-server-config
     container_name: CA_CONTAINER
     networks:
-      poc:
+      net:
         aliases:
           - ${CORE_PEER_NETWORKID}
