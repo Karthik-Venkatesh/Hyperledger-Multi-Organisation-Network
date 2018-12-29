@@ -213,8 +213,8 @@ function execute() {
     installChaincode
   elif [ "$MODE" == "instantiateChaincode" ]; then
     instantiateChaincode
-  # elif [ "$MODE" == "invokeChaincode" ]; then
-  #   invokeChaincode
+  elif [ "$MODE" == "invokeChaincode" ]; then
+    invokeChaincode
   elif [ "$MODE" == "queryChaincode" ]; then
     queryChaincode
   elif [ "$MODE" == "upgradeChaincode" ]; then
